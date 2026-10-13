@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MPI Interaktif: Adaptasi Bentuk Tubuh dan Makanan Hewan</title>
+  
+  <!-- Font Google: Plus Jakarta Sans & Quicksand -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: '#7B2CBF',
+            'primary-light': '#9D4EDD',
+            secondary: '#2EC4B6',
+            'secondary-dark': '#1F9E93',
+          },
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', '"Quicksand"', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Canvas Confetti & HTML2Canvas untuk Ekspor Sertifikat JPG -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-200">
+
+  <!-- ================= HEADER ================= -->
+  <header class="sticky top-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b-2 border-purple-100 dark:border-purple-950 shadow-sm">
+    <div class="h-1.5 w-full bg-gradient-to-r from-[#7B2CBF] via-[#9D4EDD] to-[#2EC4B6]"></div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between gap-4">
+      <div onclick="navigateTo('home')" class="flex items-center gap-3 cursor-pointer">
+        <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-[#7B2CBF] to-[#2EC4B6] flex items-center justify-center text-white font-black text-xl shadow-md">✨</div>
+        <div>
+          <span class="text-lg font-black bg-gradient-to-r from-[#7B2CBF] to-[#2EC4B6] bg-clip-text text-transparent">MPI INTERAKTIF</span>
+          <p class="text-[11px] font-semibold text-slate-500">Adaptasi Bentuk Tubuh &amp; Makanan Hewan</p>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <nav class="hidden md:flex items-center gap-1.5 bg-purple-50 dark:bg-slate-800 p-1.5 rounded-2xl border border-purple-100 dark:border-purple-900">
+        <button onclick="navigateTo('home')" id="nav-home" class="nav-btn px-3.5 py-2 rounded-xl text-xs font-bold bg-[#7B2CBF] text-white">🏠 Beranda</button>
+        <button onclick="navigateTo('materi')" id="nav-materi" class="nav-btn px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-[#7B2CBF]">📖 Materi (1 Slide)</button>
+        <button onclick="navigateTo('asesmen')" id="nav-asesmen" class="nav-btn px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-[#7B2CBF]">🎯 Asesmen (20 Soal)</button>
+        <button onclick="navigateTo('sertifikat')" id="nav-sertifikat" class="nav-btn px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-[#7B2CBF]">🎖️ Sertifikat</button>
+        <button onclick="navigateTo('kirim-nilai')" id="nav-kirim-nilai" class="nav-btn px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-[#7B2CBF]">📲 Kirim Nilai</button>
+      </nav>
+
+      <button onclick="toggleTheme()" class="p-2.5 rounded-xl bg-purple-50 dark:bg-slate-800 border border-purple-200 text-sm">
+        <span id="theme-icon">🌙</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ================= MAIN CONTAINER ================= -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+    <!-- 1. TAMPILAN AWAL / BERANDA -->
+    <section id="view-home" class="space-y-6">
+      <div class="rounded-3xl bg-gradient-to-br from-[#7B2CBF] via-[#5A189A] to-[#2EC4B6] p-6 sm:p-10 text-white shadow-2xl">
+        <h1 class="text-3xl sm:text-4xl font-black">Hebatnya Bentuk Tubuh &amp; Makanan Hewan!</h1>
+        <p class="text-white/90 text-sm sm:text-base mt-2">Media Pembelajaran Interaktif Mandiri SD Berbasis Deep Learning.</p>
+        <div class="pt-4 flex gap-3">
+          <button onclick="navigateTo('materi')" class="px-5 py-2.5 rounded-2xl bg-white text-[#7B2CBF] font-black text-xs shadow-lg">Mulai Belajar Materi ➔</button>
+          <button onclick="navigateTo('asesmen')" class="px-5 py-2.5 rounded-2xl bg-[#2EC4B6] text-white font-black text-xs shadow-lg">Asesmen 20 Soal ⭐</button>
+        </div>
+      </div>
+
+      <!-- Form Identitas Siswa -->
+      <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 shadow-xl border-2 border-purple-100 dark:border-purple-950">
+        <span class="text-xs font-extrabold uppercase text-[#2EC4B6]">📌 Tampilan Awal</span>
+        <h2 class="text-xl font-black text-slate-800 dark:text-white">Identitas Peserta Didik</h2>
+        <form onsubmit="saveProfile(event)" class="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div>
+            <label class="block text-xs font-bold mb-1">Nama Peserta Didik:</label>
+            <input type="text" id="input-name" required value="Danu Waloyo" class="w-full px-4 py-2.5 rounded-xl border border-purple-200 dark:bg-slate-800 text-sm">
+          </div>
+          <div>
+            <label class="block text-xs font-bold mb-1">Kelas:</label>
+            <select id="input-grade" class="w-full px-4 py-2.5 rounded-xl border border-purple-200 dark:bg-slate-800 text-sm">
+              <option value="Kelas 1 SD">Kelas 1 SD</option>
+              <option value="Kelas 2 SD" selected>Kelas 2 SD</option>
+              <option value="Kelas 3 SD">Kelas 3 SD</option>
+              <option value="Kelas 4 SD">Kelas 4 SD</option>
+              <option value="Kelas 5 SD">Kelas 5 SD</option>
+              <option value="Kelas 6 SD">Kelas 6 SD</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold mb-1">Mata Pelajaran:</label>
+            <input type="text" id="input-subject" required value="IPAS - Ciri Hewan" class="w-full px-4 py-2.5 rounded-xl border border-purple-200 dark:bg-slate-800 text-sm">
+          </div>
+          <div class="sm:col-span-3 flex justify-end">
+            <button type="submit" class="px-5 py-2 rounded-xl bg-gradient-to-r from-[#7B2CBF] to-[#2EC4B6] text-white text-xs font-bold">Simpan Data Siswa ✓</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Menu Kartu -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div onclick="navigateTo('materi')" class="cursor-pointer p-5 rounded-3xl bg-white dark:bg-slate-900 border-2 border-purple-100 hover:border-purple-300 shadow-lg">
+          <span class="text-xs font-black text-[#2EC4B6]">📌 Materi</span>
+          <h3 class="text-lg font-black mt-1">Materi Pembelajaran (1 Slide)</h3>
+          <p class="text-xs text-slate-500 mt-1">Eksplorasi ciri paruh burung, gigi hewan, mulut serangga, dan kucing.</p>
+        </div>
+        <div onclick="navigateTo('asesmen')" class="cursor-pointer p-5 rounded-3xl bg-white dark:bg-slate-900 border-2 border-teal-100 hover:border-teal-300 shadow-lg">
+          <span class="text-xs font-black text-[#7B2CBF]">📌 Asasmen Akhir</span>
+          <h3 class="text-lg font-black mt-1">Asesmen 20 Soal Tantangan</h3>
+          <p class="text-xs text-slate-500 mt-1">Perhitungan nilai otomatis, predikat, dan konfeti saat skor ≥ 90.</p>
+        </div>
+        <div onclick="navigateTo('sertifikat')" class="cursor-pointer p-5 rounded-3xl bg-white dark:bg-slate-900 border-2 border-amber-100 hover:border-amber-300 shadow-lg">
+          <span class="text-xs font-black text-[#2EC4B6]">📌 Sertifikat</span>
+          <h3 class="text-lg font-black mt-1">Sertifikat Hasil Belajar</h3>
+          <p class="text-xs text-slate-500 mt-1">Hanya menampilkan data siswa &amp; nilai. Unduh format gambar JPG &amp; rekaman suara.</p>
+        </div>
+        <div onclick="navigateTo('kirim-nilai')" class="cursor-pointer p-5 rounded-3xl bg-white dark:bg-slate-900 border-2 border-rose-100 hover:border-rose-300 shadow-lg">
+          <span class="text-xs font-black text-[#7B2CBF]">📌 Kirim Nilai</span>
+          <h3 class="text-lg font-black mt-1">Kirim Nilai ke WhatsApp Admin</h3>
+          <p class="text-xs text-slate-500 mt-1">Format terkirim langsung ke nomor admin 085828459399.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. MATERI PEMBELAJARAN (SATU SLIDE CANVA) -->
+    <section id="view-materi" class="hidden space-y-6">
+      <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-10 shadow-2xl border-4 border-[#7B2CBF]/20 relative">
+        <div class="pb-4 border-b-2 border-purple-100 flex justify-between items-center flex-wrap gap-3">
+          <div>
+            <span class="text-xs font-black uppercase text-[#2EC4B6]">📖 Slide Pembelajaran Terpadu (1 Slide)</span>
+            <h1 class="text-2xl sm:text-3xl font-black">Adaptasi Bentuk Tubuh &amp; Makanan Hewan</h1>
+          </div>
+          <button onclick="toggleSpeechSlide()" class="px-4 py-2 rounded-xl bg-[#7B2CBF] text-white font-bold text-xs">
+            🔊 <span id="speech-label">Putar Suara Slide</span>
+          </button>
+        </div>
+
+        <!-- 4 Topik Mengalir dalam 1 Slide -->
+        <div class="mt-6 space-y-8">
+          <!-- Topik 1 -->
+          <div>
+            <h2 class="text-xl font-black text-[#7B2CBF] mb-3">1. Ciri-ciri Paruh Burung &amp; Jenis Makanan</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 text-xs">
+              <div class="p-4 rounded-2xl bg-purple-50 dark:bg-purple-950/30 border border-purple-200">
+                <div class="font-black text-sm">🦅 Elang (Makanan: Daging)</div>
+                <p class="mt-1">Paruh tajam, kuat, runcing, dan agak membengkok untuk mengoyak daging.</p>
+              </div>
+              <div class="p-4 rounded-2xl bg-teal-50 dark:bg-teal-950/30 border border-teal-200">
+                <div class="font-black text-sm">🐦 Pipit (Makanan: Biji-bijian)</div>
+                <p class="mt-1">Paruh pendek, tebal, dan runcing untuk memecah biji-bijian.</p>
+              </div>
+              <div class="p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200">
+                <div class="font-black text-sm">🪵 Burung Pelatuk (Makanan: Serangga)</div>
+                <p class="mt-1">Paruh runcing agak panjang untuk memahat kayu pohon dan menangkap serangga di dalamnya.</p>
+              </div>
+              <div class="p-4 rounded-2xl bg-blue-50 dark:bg-blue-950/30 border border-blue-200">
+                <div class="font-black text-sm">🐟 Pelikan (Makanan: Ikan)</div>
+                <p class="mt-1">Paruh panjang dan berkantong besar pada bagian bawah untuk menyimpan makanan.</p>
+              </div>
+              <div class="p-4 rounded-2xl bg-rose-50 dark:bg-rose-950/30 border border-rose-200">
+                <div class="font-black text-sm">🐔 Ayam (Makanan: Biji &amp; Cacing)</div>
+                <p class="mt-1">Paruh pendek, tebal, dan runcing untuk mematuk biji serta mencari cacing di tanah.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Topik 2 -->
+          <div>
+            <h2 class="text-xl font-black text-[#2EC4B6] mb-3">2. Bentuk Gigi Hewan Sesuai Jenis Makanannya</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+              <div class="p-4 rounded-2xl bg-teal-50 dark:bg-teal-950/30 border border-teal-200">
+                <div class="font-black text-sm text-[#1F9E93]">🌿 a. Herbivora (Pemakan Tumbuhan)</div>
+                <p class="mt-1">Gigi seri dan geraham kuat untuk mengunyah rumput. Contoh: sapi, gajah, kelinci, dan rusa.</p>
+              </div>
+              <div class="p-4 rounded-2xl bg-rose-50 dark:bg-rose-950/30 border border-rose-200">
+                <div class="font-black text-sm text-rose-600">🥩 b. Karnivora (Pemakan Daging)</div>
+                <p class="mt-1">Gigi taring tajam, kuku kaki runcing, penciuman tajam. Contoh: singa, harimau, komodo, burung elang.</p>
+              </div>
+              <div class="p-4 rounded-2xl bg-purple-50 dark:bg-purple-950/30 border border-purple-200">
+                <div class="font-black text-sm text-[#7B2CBF]">🥗 c. Omnivora (Pemakan Segala)</div>
+                <p class="mt-1">Susunan gigi lengkap: taring tajam, seri pemotong, geraham pengunyah. Contoh: ayam, musang, tikus, paus.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Topik 3 -->
+          <div>
+            <h2 class="text-xl font-black text-slate-800 dark:text-white mb-3">3. Bentuk Mulut Serangga</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+              <div class="p-4 rounded-2xl border border-purple-200 bg-white dark:bg-slate-800">
+                <span class="text-2xl">🦋</span>
+                <div class="font-black mt-1">1. Penghisap</div>
+                <p class="text-slate-500">Belalai yang dapat digulung dan dijulurkan. Contoh: Kupu-kupu.</p>
+              </div>
+              <div class="p-4 rounded-2xl border border-rose-200 bg-white dark:bg-slate-800">
+                <span class="text-2xl">🦟</span>
+                <div class="font-black mt-1">2. Penusuk &amp; Penghisap</div>
+                <p class="text-slate-500">Bentuk mulut yang tajam dan panjang. Contoh: Nyamuk.</p>
+              </div>
+              <div class="p-4 rounded-2xl border border-amber-200 bg-white dark:bg-slate-800">
+                <span class="text-2xl">🐝</span>
+                <div class="font-black mt-1">3. Penjilat</div>
+                <p class="text-slate-500">Lidah panjang untuk menjilat nektar bunga. Contoh: Lebah.</p>
+              </div>
+              <div class="p-4 rounded-2xl border border-teal-200 bg-white dark:bg-slate-800">
+                <span class="text-2xl">🪰</span>
+                <div class="font-black mt-1">4. Penyerap</div>
+                <p class="text-slate-500">Alat penyerap spons untuk cairan. Contoh: Lalat.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Topik 4 -->
+          <div>
+            <h2 class="text-xl font-black text-slate-800 dark:text-white mb-3">4. Hewan Bentuk Sama Tetapi Berbeda Jenis</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+              <div class="p-4 rounded-2xl bg-purple-50 dark:bg-purple-950/30 border border-purple-200">
+                <span class="font-black text-sm text-[#7B2CBF]">🐈 Kucing A (Kucing Lokal)</span>
+                <p class="mt-1">Rambut pendek, ukuran tubuh kecil, telinga memanjang ke atas.</p>
+              </div>
+              <div class="p-4 rounded-2xl bg-teal-50 dark:bg-teal-950/30 border border-teal-200">
+                <span class="font-black text-sm text-[#1F9E93]">🐱 Kucing B (Kucing Persia)</span>
+                <p class="mt-1">Rambut panjang dan tebal, telinga melebar, ukuran tubuh terlihat lebih besar.</p>
+              </div>
+            </div>
+            <div class="mt-3 p-3 rounded-xl bg-purple-100 dark:bg-purple-950 text-xs font-semibold text-purple-900 dark:text-purple-200">
+              💡 <strong>Deep Learning:</strong> Keduanya tetap satu spesies yang sama yakni kucing, dengan perbedaan ciri fisik sebagai bentuk adaptasi.
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-8 pt-4 border-t flex justify-end">
+          <button onclick="navigateTo('asesmen')" class="px-6 py-3 rounded-2xl bg-gradient-to-r from-[#7B2CBF] to-[#2EC4B6] text-white font-black text-xs shadow-lg">
+            Lanjut ke Asesmen Akhir (20 Soal) ➔
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. ASESMEN AKHIR (20 SOAL) -->
+    <section id="view-asesmen" class="hidden space-y-6">
+      <div id="quiz-screen" class="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 shadow-xl border-2 border-purple-100">
+        <div class="flex justify-between items-center pb-3 border-b">
+          <h2 class="text-xl font-black" id="quiz-question-number">Soal No. 1 dari 20</h2>
+          <span class="text-xs font-bold text-purple-600 bg-purple-50 px-3 py-1 rounded-full">Bobot: 5 Poin</span>
+        </div>
+        <h3 id="quiz-question-text" class="mt-4 text-base sm:text-lg font-bold">...</h3>
+        <div id="quiz-options-container" class="mt-4 space-y-2.5"></div>
+        <div class="mt-6 pt-4 border-t flex justify-between">
+          <button onclick="prevQuestion()" id="btn-prev-question" class="px-4 py-2 border rounded-xl text-xs font-bold">⬅ Sebelumnya</button>
+          <button onclick="nextQuestion()" id="btn-next-question" class="px-5 py-2 bg-[#7B2CBF] text-white rounded-xl text-xs font-bold">Berikutnya ➔</button>
+        </div>
+      </div>
+
+      <!-- Hasil Asesmen -->
+      <div id="quiz-result-screen" class="hidden bg-white dark:bg-slate-900 rounded-3xl p-8 text-center space-y-4 border-2 border-purple-100 shadow-xl">
+        <div class="text-5xl">🏆</div>
+        <h2 class="text-3xl font-black">Nilai Akhir: <span id="res-score" class="text-[#7B2CBF]">100</span> / 100</h2>
+        <div id="res-predicate-badge" class="inline-block px-4 py-1.5 rounded-full text-xs font-black bg-emerald-100 text-emerald-800">Predikat: Sangat Baik</div>
+        <div class="pt-3 flex justify-center gap-3">
+          <button onclick="navigateTo('sertifikat')" class="px-5 py-2.5 rounded-xl bg-amber-500 text-white font-bold text-xs">🎖️ Buka Sertifikat</button>
+          <button onclick="navigateTo('kirim-nilai')" class="px-5 py-2.5 rounded-xl bg-[#2EC4B6] text-white font-bold text-xs">📲 Kirim Nilai WA</button>
+          <button onclick="retakeQuiz()" class="px-4 py-2.5 rounded-xl border text-xs font-bold">🔄 Ulangi</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. SERTIFIKAT HASIL BELAJAR -->
+    <section id="view-sertifikat" class="hidden space-y-6">
+      <div class="flex justify-between items-center flex-wrap gap-2">
+        <h2 class="text-xl font-black">Sertifikat Hasil Belajar</h2>
+        <div class="flex gap-2">
+          <button onclick="downloadCertificateJpg()" class="px-4 py-2 rounded-xl bg-[#7B2CBF] text-white text-xs font-bold">📥 Unduh Sertifikat JPG</button>
+          <button onclick="downloadVoiceRecording()" class="px-4 py-2 rounded-xl bg-[#2EC4B6] text-white text-xs font-bold">📥 Unduh Rekaman Suara</button>
+        </div>
+      </div>
+
+      <div id="cert-locked-state" class="bg-white dark:bg-slate-900 rounded-3xl p-8 text-center border-2 border-dashed border-purple-200">
+        <div class="text-4xl">🔒</div>
+        <h3 class="font-bold mt-2">Sertifikat Belum Tersedia</h3>
+        <p class="text-xs text-slate-500 mt-1">Sertifikat tidak menampilkan nilai kosong. Selesaikan 20 soal asesmen terlebih dahulu.</p>
+      </div>
+
+      <div id="cert-wrapper" class="hidden flex justify-center overflow-x-auto pb-4">
+        <div id="certificate-canvas" class="w-[740px] bg-white text-slate-900 p-8 rounded-3xl shadow-xl relative border-[10px] border-[#7B2CBF] text-center">
+          <span class="text-[10px] font-black uppercase text-[#7B2CBF] tracking-widest bg-purple-100 px-3 py-1 rounded-full">MPI SD MANDIRI</span>
+          <h1 class="text-3xl font-black mt-2" style="color: #7B2CBF;">SERTIFIKAT HASIL BELAJAR</h1>
+          <p class="text-xs font-bold text-[#1F9E93]">Topik: Adaptasi Bentuk Tubuh dan Makanan Hewan</p>
+          <div class="w-16 h-1 bg-[#2EC4B6] mx-auto my-3 rounded-full"></div>
+          <p class="text-[10px] text-slate-400 uppercase font-extrabold">Diberikan kepada peserta didik:</p>
+          <div class="text-2xl font-black text-[#5A189A] py-1" id="cert-student-name">Danu Waloyo</div>
+          <div class="text-xs font-bold text-slate-600">Kelas: <span id="cert-student-grade" class="text-[#2EC4B6]">Kelas 2 SD</span> • Mata Pelajaran: <span id="cert-student-subject">IPAS</span></div>
+          <div class="my-4 inline-flex items-center gap-6 p-3 rounded-2xl bg-purple-50 border border-purple-200">
+            <div><span class="text-[9px] uppercase block text-slate-400">Nilai Akhir</span><span id="cert-score-value" class="text-3xl font-black text-[#7B2CBF]">100</span></div>
+            <div><span class="text-[9px] uppercase block text-slate-400">Predikat</span><span id="cert-predicate-value" class="text-lg font-black text-[#1F9E93]">Sangat Baik</span></div>
+          </div>
+          <div class="pt-3 border-t text-[11px] flex justify-between px-4 text-slate-500">
+            <div>Tanggal: <strong id="cert-date">-</strong></div>
+            <div>🏅 Terverifikasi Digital</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. KIRIM NILAI KE WHATSAPP ADMIN -->
+    <section id="view-kirim-nilai" class="hidden space-y-6">
+      <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 shadow-xl border-2 border-purple-100">
+        <h2 class="text-xl font-black text-slate-800 dark:text-white">Kirim Nilai ke WhatsApp Admin (085828459399)</h2>
+        <pre id="whatsapp-formatted-preview" class="mt-4 p-4 rounded-xl bg-slate-50 dark:bg-slate-800 text-xs font-mono whitespace-pre-wrap border"></pre>
+        <div class="mt-4 flex gap-3">
+          <button onclick="sendToWhatsAppAdmin()" class="px-6 py-3 rounded-xl bg-emerald-600 text-white font-black text-xs shadow-lg">💬 Buka WhatsApp Sekarang</button>
+          <button onclick="copyWhatsAppText()" id="btn-copy-wa" class="px-4 py-3 rounded-xl border text-xs font-bold">Salin Teks</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ================= PEREKAM SUARA (POJOK KIRI DENGAN MINIMIZE) ================= -->
+  <div class="fixed bottom-6 left-6 z-50 flex flex-col items-start gap-2">
+    <!-- Minimized Bar -->
+    <div id="recorder-minimized" class="hidden bg-white/95 dark:bg-slate-900 border border-purple-200 rounded-full shadow-xl p-1.5 flex items-center gap-2">
+      <button onclick="maximizeRecorder()" class="px-3 py-1.5 rounded-full bg-[#7B2CBF] text-white font-bold text-xs">
+        🎙️ <span id="recorder-mini-status">Perekam Suara</span>
+      </button>
+      <button onclick="maximizeRecorder()" class="p-1.5 text-xs font-bold text-purple-700">⤢</button>
+    </div>
+
+    <!-- Trigger -->
+    <div id="recorder-launcher" class="flex items-center gap-2">
+      <button onclick="openRecorderPanel()" class="px-4 py-3 rounded-full bg-gradient-to-r from-[#7B2CBF] to-[#9D4EDD] text-white font-bold shadow-xl text-xs flex items-center gap-2">
+        <span>🎙️</span><span>Rekam Suara Siswa</span>
+      </button>
+      <button onclick="minimizeRecorder()" class="p-2 bg-white rounded-full shadow text-xs font-bold" title="Minimize">_</button>
+    </div>
+
+    <!-- Panel -->
+    <div id="recorder-panel" class="hidden w-80 bg-white dark:bg-slate-900 rounded-3xl p-5 shadow-2xl border-2 border-purple-200">
+      <div class="flex justify-between items-center pb-2 border-b">
+        <div class="font-bold text-xs">Perekam Suara (Pojok Kiri)</div>
+        <div class="flex gap-1">
+          <button onclick="minimizeRecorder()" class="p-1 text-slate-400 font-black">_</button>
+          <button onclick="closeRecorderPanel()" class="p-1 text-slate-400 font-black">✕</button>
+        </div>
+      </div>
+      <div class="my-4 p-3 bg-purple-50 dark:bg-slate-800 rounded-2xl text-center">
+        <div id="rec-time" class="text-2xl font-black text-rose-600">00:00</div>
+        <p id="rec-status-text" class="text-[11px] text-slate-500 my-1">Tekan tombol untuk berbicara.</p>
+        <div class="flex justify-center gap-2 mt-2">
+          <button id="btn-start-record" onclick="startAudioRecord()" class="px-3 py-1.5 bg-rose-600 text-white font-bold text-xs rounded-xl">Mulai Rekam</button>
+          <button id="btn-stop-record" onclick="stopAudioRecord()" class="hidden px-3 py-1.5 bg-slate-800 text-white font-bold text-xs rounded-xl">Selesai</button>
+          <button id="btn-play-record" onclick="playAudioRecord()" class="hidden px-3 py-1.5 bg-[#7B2CBF] text-white font-bold text-xs rounded-xl">Putar</button>
+          <button id="btn-download-record" onclick="downloadVoiceRecording()" class="hidden px-3 py-1.5 bg-[#2EC4B6] text-white font-bold text-xs rounded-xl">Unduh</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= JAVASCRIPT LOGIC ================= -->
+  <script>
+    let studentProfile = { name: 'Danu Waloyo', grade: 'Kelas 2 SD', subject: 'IPAS - Ciri Hewan' };
+    let assessmentScore = null, assessmentPredicate = null, currentQuizIndex = 0, userAnswers = {};
+    let recordedAudioBlob = null, recordedAudioUrl = null, mediaRecorder = null, audioChunks = [], recordInterval = null, recordSeconds = 0;
+
+    const quizData = [
+      { q: "Burung berparuh tajam, kuat, runcing, dan agak membengkok untuk mengoyak daging adalah...", opt: ["Burung Elang", "Burung Pipit", "Burung Pelatuk", "Burung Pelikan"], a: 0 },
+      { q: "Burung pipit memiliki paruh pendek, tebal, dan runcing untuk memakan...", opt: ["Daging", "Biji-bijian", "Ikan", "Nektar"], a: 1 },
+      { q: "Paruh runcing agak panjang pada burung pelatuk berfungsi untuk...", opt: ["Menyimpan air", "Memahat kayu pohon dan menangkap serangga", "Menyaring lumpur", "Mengoyak daging"], a: 1 },
+      { q: "Ciri paruh burung pelikan adalah...", opt: ["Paruh melengkung", "Paruh tipis", "Paruh panjang dan berkantong besar untuk menyimpan ikan", "Paruh pipih"], a: 2 },
+      { q: "Ayam memiliki paruh pendek, tebal, dan runcing untuk memakan...", opt: ["Hanya daun", "Biji-bijian dan cacing", "Daging", "Nektar"], a: 1 },
+      { q: "Hewan pemakan tumbuhan disebut...", opt: ["Karnivora", "Herbivora", "Omnivora", "Insektivora"], a: 1 },
+      { q: "Hewan herbivora memiliki susunan gigi khas berupa...", opt: ["Taring tajam", "Gigi seri dan geraham kuat untuk mengunyah", "Hanya taring", "Tidak bergigi"], a: 1 },
+      { q: "Kelompok hewan herbivora adalah...", opt: ["Sapi, gajah, kelinci, dan rusa", "Singa, harimau, serigala", "Ayam, tikus, musang", "Elang, komodo"], a: 0 },
+      { q: "Ciri khas fisik hewan karnivora adalah...", opt: ["Gigi taring tajam dan kuku runcing", "Geraham sangat lebar", "Paruh sendok", "Hanya makan rumput"], a: 0 },
+      { q: "Contoh hewan karnivora pemakan daging adalah...", opt: ["Kelinci dan sapi", "Singa, harimau, komodo, dan burung elang", "Gajah dan rusa", "Ayam dan bebek"], a: 1 },
+      { q: "Hewan pemakan segala jenis makanan disebut...", opt: ["Karnivora", "Herbivora", "Omnivora", "Insektivora"], a: 2 },
+      { q: "Hewan omnivora memiliki susunan gigi...", opt: ["Lengkap (seri, taring, dan geraham)", "Hanya geraham", "Hanya taring", "Tidak ada gigi"], a: 0 },
+      { q: "Contoh hewan omnivora adalah...", opt: ["Sapi dan kelinci", "Ayam, musang, tikus, dan paus", "Singa dan harimau", "Kupu-kupu"], a: 1 },
+      { q: "Kupu-kupu memiliki tipe mulut penghisap yang berbentuk seperti...", opt: ["Spons", "Belalai yang dapat digulung dan dijulurkan", "Jarum penusuk", "Taring runcing"], a: 1 },
+      { q: "Nyamuk memiliki tipe mulut...", opt: ["Penghisap", "Penusuk dan penghisap", "Penjilat", "Penyerap"], a: 1 },
+      { q: "Lebah memiliki tipe mulut penjilat untuk...", opt: ["Menjilat nektar bunga dengan lidah panjang", "Menyerap cairan spons", "Memotong kayu", "Merobek daging"], a: 0 },
+      { q: "Lalat memiliki tipe mulut penyerap dengan alat seperti...", opt: ["Spons untuk menyerap makanan cair", "Belalai", "Jarum suntik", "Taring tajam"], a: 0 },
+      { q: "Kucing lokal (Kucing A) memiliki ciri...", opt: ["Rambut panjang lebat", "Rambut pendek dengan tubuh kecil lincah", "Telinga pendek", "Hidung pesek"], a: 1 },
+      { q: "Kucing lokal dan kucing persia memiliki bentuk berbeda tetapi...", opt: ["Berbeda famili", "Sama-sama satu spesies yakni kucing", "Hewan herbivora", "Bukan mamalia"], a: 1 },
+      { q: "Mengapa bentuk paruh, gigi, dan mulut hewan berbeda-beda?", opt: ["Penyesuaian bentuk tubuh terhadap makanannya", "Hanya warna tubuh", "Tanpa alasan", "Meniru benda"], a: 0 }
+    ];
+
+    function navigateTo(v) {
+      document.querySelectorAll('main > section').forEach(s => s.classList.add('hidden'));
+      document.getElementById('view-' + v).classList.remove('hidden');
+      document.querySelectorAll('.nav-btn').forEach(b => {
+        b.classList.remove('bg-[#7B2CBF]', 'text-white');
+        b.classList.add('text-slate-600');
+      });
+      const active = document.getElementById('nav-' + v);
+      if (active) { active.classList.add('bg-[#7B2CBF]', 'text-white'); active.classList.remove('text-slate-600'); }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      if (v === 'asesmen' && assessmentScore === null) loadQuizQuestion();
+      if (v === 'sertifikat') updateCertificateView();
+      if (v === 'kirim-nilai') updateWhatsAppPreview();
+    }
+
+    function saveProfile(e) {
+      e.preventDefault();
+      studentProfile.name = document.getElementById('input-name').value;
+      studentProfile.grade = document.getElementById('input-grade').value;
+      studentProfile.subject = document.getElementById('input-subject').value;
+      alert('Data siswa tersimpan!');
+      updateCertificateView();
+      updateWhatsAppPreview();
+    }
+
+    let isSpeaking = false;
+    function toggleSpeechSlide() {
+      if ('speechSynthesis' in window) {
+        if (isSpeaking) { window.speechSynthesis.cancel(); isSpeaking = false; return; }
+        const t = "Materi Pembelajaran satu slide. Paruh elang tajam membengkok pemakan daging. Paruh pipit pendek tebal pemecah biji. Paruh pelatuk memahat kayu mencari serangga. Paruh pelikan berkantong besar penyimpan ikan. Paruh ayam mematuk biji dan cacing. Hewan dibagi herbivora pemakan tumbuhan, karnivora pemakan daging, dan omnivora pemakan segala. Mulut serangga terdiri dari penghisap kupu-kupu, penusuk penghisap nyamuk, penjilat lebah, dan penyerap lalat. Kucing lokal dan persia adalah satu spesies kucing.";
+        const ut = new SpeechSynthesisUtterance(t); ut.lang = 'id-ID';
+        ut.onend = () => isSpeaking = false;
+        isSpeaking = true; window.speechSynthesis.speak(ut);
+      }
+    }
+
+    function loadQuizQuestion() {
+      const q = quizData[currentQuizIndex];
+      document.getElementById('quiz-question-number').innerText = `Soal No. ${currentQuizIndex + 1} dari 20`;
+      document.getElementById('quiz-question-text').innerText = q.q;
+      const c = document.getElementById('quiz-options-container'); c.innerHTML = '';
+      q.opt.forEach((o, i) => {
+        const sel = userAnswers[currentQuizIndex] === i;
+        const b = document.createElement('button');
+        b.className = `w-full p-3.5 rounded-2xl text-left border text-xs sm:text-sm font-bold flex justify-between ${sel ? 'border-[#7B2CBF] bg-purple-50 text-[#7B2CBF]' : 'border-slate-200 bg-white'}`;
+        b.innerHTML = `<span>${String.fromCharCode(65 + i)}. ${o}</span>${sel ? '<span>✓</span>' : ''}`;
+        b.onclick = () => { userAnswers[currentQuizIndex] = i; loadQuizQuestion(); };
+        c.appendChild(b);
+      });
+      document.getElementById('btn-prev-question').disabled = currentQuizIndex === 0;
+      document.getElementById('btn-next-question').innerText = currentQuizIndex === 19 ? 'Selesai & Kumpulkan' : 'Berikutnya ➔';
+    }
+
+    function prevQuestion() { if (currentQuizIndex > 0) { currentQuizIndex--; loadQuizQuestion(); } }
+    function nextQuestion() {
+      if (currentQuizIndex < 19) { currentQuizIndex++; loadQuizQuestion(); }
+      else finishQuiz();
+    }
+
+    function finishQuiz() {
+      let correct = 0; quizData.forEach((q, i) => { if (userAnswers[i] === q.a) correct++; });
+      assessmentScore = Math.round((correct / 20) * 100);
+      assessmentPredicate = assessmentScore >= 90 ? "Sangat Baik" : assessmentScore >= 80 ? "Baik" : assessmentScore >= 70 ? "Cukup" : "Perlu Bimbingan";
+      document.getElementById('quiz-screen').classList.add('hidden');
+      document.getElementById('quiz-result-screen').classList.remove('hidden');
+      document.getElementById('res-score').innerText = assessmentScore;
+      document.getElementById('res-predicate-badge').innerText = `Predikat: ${assessmentPredicate}`;
+      if (assessmentScore >= 90 && window.confetti) confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+      updateCertificateView(); updateWhatsAppPreview();
+    }
+
+    function retakeQuiz() {
+      assessmentScore = null; userAnswers = {}; currentQuizIndex = 0;
+      document.getElementById('quiz-screen').classList.remove('hidden');
+      document.getElementById('quiz-result-screen').classList.add('hidden');
+      loadQuizQuestion();
+    }
+
+    function updateCertificateView() {
+      if (assessmentScore === null) {
+        document.getElementById('cert-locked-state').classList.remove('hidden');
+        document.getElementById('cert-wrapper').classList.add('hidden');
+      } else {
+        document.getElementById('cert-locked-state').classList.add('hidden');
+        document.getElementById('cert-wrapper').classList.remove('hidden');
+        document.getElementById('cert-student-name').innerText = studentProfile.name;
+        document.getElementById('cert-student-grade').innerText = studentProfile.grade;
+        document.getElementById('cert-student-subject').innerText = studentProfile.subject;
+        document.getElementById('cert-score-value').innerText = `${assessmentScore}/100`;
+        document.getElementById('cert-predicate-value').innerText = assessmentPredicate;
+        document.getElementById('cert-date').innerText = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+      }
+    }
+
+    function downloadCertificateJpg() {
+      if (assessmentScore === null) return alert('Selesaikan asesmen terlebih dahulu!');
+      html2canvas(document.getElementById('certificate-canvas'), { scale: 2 }).then(canvas => {
+        const a = document.createElement('a');
+        a.download = `Sertifikat_${studentProfile.name.replace(/\\s+/g, '_')}_Nilai_${assessmentScore}.jpg`;
+        a.href = canvas.toDataURL('image/jpeg', 0.95);
+        a.click();
+      });
+    }
+
+    function generateWhatsAppMessage() {
+      const audioStatus = recordedAudioUrl ? 'Tersedia (Siap dilampirkan)' : 'Belum merekam';
+      const scoreText = assessmentScore !== null ? `${assessmentScore}/100 (${assessmentPredicate})` : 'Belum Asesmen';
+      return `*LAPORAN HASIL BELAJAR - MPI INTERAKTIF*
+1. nama siswa: ${studentProfile.name}
+2. kelas: ${studentProfile.grade}
+3. Nilai Asasmen Akhir: ${scoreText}
+4. Rekaman suara: ${audioStatus}
+
+Mata Pelajaran: ${studentProfile.subject}
+Tanggal Belajar: ${new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
+
+*Catatan:*
+Format berkas yang dikirimkan ke admin berupa file Sertifikat JPG dan Rekaman Suara.`;
+    }
+
+    function updateWhatsAppPreview() {
+      document.getElementById('whatsapp-formatted-preview').innerText = generateWhatsAppMessage();
+    }
+
+    function sendToWhatsAppAdmin() {
+      window.open(`https://wa.me/6285828459399?text=${encodeURIComponent(generateWhatsAppMessage())}`, '_blank');
+    }
+
+    function copyWhatsAppText() {
+      navigator.clipboard.writeText(generateWhatsAppMessage());
+      const b = document.getElementById('btn-copy-wa'); b.innerText = 'Tersalin! ✓';
+      setTimeout(() => b.innerText = 'Salin Teks', 2000);
+    }
+
+    // Voice Recorder
+    function openRecorderPanel() {
+      document.getElementById('recorder-panel').classList.remove('hidden');
+      document.getElementById('recorder-launcher').classList.add('hidden');
+      document.getElementById('recorder-minimized').classList.add('hidden');
+    }
+    function closeRecorderPanel() {
+      document.getElementById('recorder-panel').classList.add('hidden');
+      document.getElementById('recorder-launcher').classList.remove('hidden');
+    }
+    function minimizeRecorder() {
+      document.getElementById('recorder-panel').classList.add('hidden');
+      document.getElementById('recorder-launcher').classList.add('hidden');
+      document.getElementById('recorder-minimized').classList.remove('hidden');
+    }
+    function maximizeRecorder() {
+      document.getElementById('recorder-minimized').classList.add('hidden');
+      document.getElementById('recorder-panel').classList.remove('hidden');
+    }
+
+    async function startAudioRecord() {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        audioChunks = [];
+        mediaRecorder = new MediaRecorder(stream);
+        mediaRecorder.ondataavailable = e => { if (e.data.size > 0) audioChunks.push(e.data); };
+        mediaRecorder.onstop = () => {
+          recordedAudioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+          recordedAudioUrl = URL.createObjectURL(recordedAudioBlob);
+          document.getElementById('btn-play-record').classList.remove('hidden');
+          document.getElementById('btn-download-record').classList.remove('hidden');
+          document.getElementById('rec-status-text').innerText = 'Rekaman berhasil disimpan!';
+          document.getElementById('recorder-mini-status').innerText = 'Rekaman Ada';
+          updateWhatsAppPreview();
+        };
+        mediaRecorder.start(); recordSeconds = 0;
+        document.getElementById('btn-start-record').classList.add('hidden');
+        document.getElementById('btn-stop-record').classList.remove('hidden');
+        recordInterval = setInterval(() => {
+          recordSeconds++;
+          const m = String(Math.floor(recordSeconds / 60)).padStart(2, '0');
+          const s = String(recordSeconds % 60).padStart(2, '0');
+          document.getElementById('rec-time').innerText = `${m}:${s}`;
+          document.getElementById('recorder-mini-status').innerText = `Merekam ${m}:${s}`;
+        }, 1000);
+      } catch (err) { alert('Izin mikrofon diperlukan!'); }
+    }
+
+    function stopAudioRecord() {
+      if (mediaRecorder && mediaRecorder.state === 'recording') {
+        mediaRecorder.stop(); clearInterval(recordInterval);
+        document.getElementById('btn-stop-record').classList.add('hidden');
+        document.getElementById('btn-start-record').classList.remove('hidden');
+      }
+    }
+
+    function playAudioRecord() {
+      if (!recordedAudioUrl) return;
+      new Audio(recordedAudioUrl).play();
+    }
+
+    function downloadVoiceRecording() {
+      if (!recordedAudioUrl) return alert('Belum ada rekaman suara.');
+      const a = document.createElement('a'); a.href = recordedAudioUrl;
+      a.download = `Rekaman_Suara_${studentProfile.name.replace(/\\s+/g, '_')}.webm`;
+      a.click();
+    }
+
+    function toggleTheme() {
+      document.documentElement.classList.toggle('dark');
+      document.getElementById('theme-icon').innerText = document.documentElement.classList.contains('dark') ? '☀️' : '🌙';
+    }
+
+    updateWhatsAppPreview();
+  </script>
+</body>
+</html>
